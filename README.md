@@ -1,3 +1,11 @@
+# How to Run
+
+1. Node 20+ is required
+2. Run `npm install`
+3. Run `npm run dev`
+4. Open `http://localhost:5173/` in browser
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
