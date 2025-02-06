@@ -1,5 +1,5 @@
 import { CurrencyRate } from "../type-definitions"
-import flagImage from '../assets/flags/ad.png';
+import { useEffect, useState } from "react";
 
 interface CurrencyItemProps {
   currencyRate: CurrencyRate;
@@ -7,6 +7,12 @@ interface CurrencyItemProps {
 }
 
 export default function CurrencyItem({ currencyRate: { currency, nameI18N, exchangeRate }, baseCurrency }: CurrencyItemProps) {
+  const [flagImage, setFlagImage] = useState('');
+  
+  useEffect(() => {
+    import(`../assets/flags/${currency?.slice(0, 2).toLowerCase()}.png`).then((img) => setFlagImage(img.default))  
+  }, [currency])
+
   return (
     <div className="bg-white shadow-md rounded-lg p-4 mb-4 flex items-center">
       <img
