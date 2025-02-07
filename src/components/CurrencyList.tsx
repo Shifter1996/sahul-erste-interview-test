@@ -10,7 +10,7 @@ export default function CurrencyList({ baseCurrency, currencyRates }: CurrencyLi
   return (
     <div className="container mx-auto mt-4">
       {currencyRates.map((rate, index) => (
-        <CurrencyItem key={index} currencyRate={rate} baseCurrency={baseCurrency} />
+        <CurrencyItem key={index} currencyCode={rate.currency} currencyName={rate.nameI18N} exchangeRate={rate.exchangeRate?.buy} baseCurrency={baseCurrency} />
       ))}
     </div>
   )
