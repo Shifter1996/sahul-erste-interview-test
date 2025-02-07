@@ -35,7 +35,7 @@ export default function App() {
   )
 
   return (
-    <div className="min-h-900 bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
       <Header />
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       {!isLoading && !!forexData?.baseCurrency && !!filteredCurrencyRates?.length && (
