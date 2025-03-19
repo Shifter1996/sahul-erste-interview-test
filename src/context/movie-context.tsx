@@ -1,17 +1,7 @@
 "use client"
 
+import { Movie, OMDbResponse } from "@/lib/api/api"
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-
-type Movie = {
-  id: string
-  title: string
-  year: string
-  poster: string
-  genre?: string
-  plot?: string
-  director?: string
-  actors?: string
-}
 
 type SearchState = {
   query: string
@@ -21,8 +11,8 @@ type SearchState = {
 }
 
 type MovieContextType = {
-  favorites: Movie[]
-  addToFavorites: (movie: Movie) => void
+  favorites: OMDbResponse[]
+  addToFavorites: (movie: OMDbResponse) => void
   removeFromFavorites: (id: string) => void
   isFavorite: (id: string) => boolean
   searchState: SearchState
@@ -32,7 +22,7 @@ type MovieContextType = {
 const MovieContext = createContext<MovieContextType | undefined>(undefined)
 
 export function MovieProvider({ children }: { children: ReactNode }) {
-  const [favorites, setFavorites] = useState<Movie[]>(() => {
+  const [favorites, setFavorites] = useState<OMDbResponse[]>(() => {
     const saved = localStorage.getItem("favorites")
     return saved ? JSON.parse(saved) : []
   })
@@ -50,19 +40,19 @@ export function MovieProvider({ children }: { children: ReactNode }) {
     sessionStorage.setItem("searchState", JSON.stringify(searchState))
   }, [searchState])
 
-  const addToFavorites = (movie: Movie) => {
+  const addToFavorites = (movie: OMDbResponse) => {
     setFavorites((prev) => {
-      if (prev.some((m) => m.id === movie.id)) return prev
+      if (prev.some((m) => m.imdbID === movie.imdbID)) return prev
       return [...prev, movie]
     })
   }
 
   const removeFromFavorites = (id: string) => {
-    setFavorites((prev) => prev.filter((movie) => movie.id !== id))
+    setFavorites((prev) => prev.filter((movie) => movie.imdbID !== id))
   }
 
   const isFavorite = (id: string) => {
-    return favorites.some((movie) => movie.id === id)
+    return favorites.some((movie) => movie.imdbID === id)
   }
 
   return (

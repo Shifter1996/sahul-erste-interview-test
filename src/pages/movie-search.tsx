@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
-import { searchMovies } from "@/lib/api"
+import { searchMovies } from "@/lib/api/api"
 import { useMovieContext } from "@/context/movie-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, ChevronLeft, ChevronRight } from "lucide-react"
+import { SEARCH_PAGE_SIZE } from "@/lib/utils"
 
 export default function MovieSearch() {
   const navigate = useNavigate()
@@ -25,41 +26,44 @@ export default function MovieSearch() {
     queryKey: ["movies", searchState.query, currentPage],
     queryFn: () => searchMovies(searchState.query, currentPage),
     enabled: searchState.query !== "",
-    keepPreviousData: true,
+    // TODO - migrate keepPreviousData to the new react-query version (https://tanstack.com/query/latest/docs/framework/react/guides/migrating-to-v5#removed-keeppreviousdata-in-favor-of-placeholderdata-identity-function)
+    // keepPreviousData: true,
   })
 
+  const totalPages = data?.totalResults ? Math.ceil(Number(data.totalResults) / SEARCH_PAGE_SIZE) : 0;
+
   // Restore scroll position when returning to the page
-  useEffect(() => {
-    if (containerRef.current && searchState.scrollPosition > 0) {
-      containerRef.current.scrollTop = searchState.scrollPosition
-    }
-  }, [searchState.scrollPosition])
+  // useEffect(() => {
+  //   if (containerRef.current && searchState.scrollPosition > 0) {
+  //     containerRef.current.scrollTop = searchState.scrollPosition
+  //   }
+  // }, [searchState.scrollPosition])
 
   // Save scroll position when leaving the page
-  useEffect(() => {
-    const saveScrollPosition = () => {
-      if (containerRef.current) {
-        setSearchState({
-          ...searchState,
-          scrollPosition: containerRef.current.scrollTop,
-        })
-      }
-    }
+  // useEffect(() => {
+  //   const saveScrollPosition = () => {
+  //     if (containerRef.current) {
+  //       setSearchState({
+  //         ...searchState,
+  //         scrollPosition: containerRef.current.scrollTop,
+  //       })
+  //     }
+  //   }
 
-    window.addEventListener("beforeunload", saveScrollPosition)
-    return () => {
-      saveScrollPosition()
-      window.removeEventListener("beforeunload", saveScrollPosition)
-    }
-  }, [searchState, setSearchState])
+  //   window.addEventListener("beforeunload", saveScrollPosition)
+  //   return () => {
+  //     saveScrollPosition()
+  //     window.removeEventListener("beforeunload", saveScrollPosition)
+  //   }
+  // }, [searchState, setSearchState])
 
   // Update search state when page changes
-  useEffect(() => {
-    setSearchState({
-      ...searchState,
-      page: currentPage,
-    })
-  }, [currentPage, searchState, setSearchState])
+  // useEffect(() => {
+  //   setSearchState({
+  //     ...searchState,
+  //     page: currentPage,
+  //   })
+  // }, [currentPage, searchState, setSearchState])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -84,7 +88,7 @@ export default function MovieSearch() {
   }
 
   return (
-    <div className="container py-6" ref={containerRef}>
+    <div className="container p-6" ref={containerRef}>
       <h1 className="text-2xl font-bold mb-6">Movie Search</h1>
 
       <form onSubmit={handleSearch} className="flex w-full max-w-lg gap-2 mb-8">
@@ -123,7 +127,7 @@ export default function MovieSearch() {
             </Card>
           ))}
         </div>
-      ) : data?.results && data.results.length > 0 ? (
+      ) : data?.Search && data.Search.length > 0 ? (
         <>
           <Table>
             <TableHeader>
@@ -135,28 +139,28 @@ export default function MovieSearch() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.results.map((movie) => (
+              {data.Search.map((movie) => (
                 <TableRow
-                  key={movie.id}
+                  key={movie.imdbID}
                   className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => handleMovieClick(movie.id)}
+                  onClick={() => handleMovieClick(movie.imdbID)}
                 >
                   <TableCell>
                     <img
-                      src={movie.poster || "/placeholder.svg"}
-                      alt={`${movie.title} poster`}
+                      src={movie.Poster || "/placeholder.svg"}
+                      alt={`${movie.Title} poster`}
                       className="h-16 w-auto object-cover rounded"
                     />
                   </TableCell>
-                  <TableCell className="font-medium">{movie.title}</TableCell>
-                  <TableCell>{movie.year}</TableCell>
-                  <TableCell>{movie.genre}</TableCell>
+                  <TableCell className="font-medium">{movie.Title}</TableCell>
+                  <TableCell>{movie.Year}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
 
-          {data.totalPages > 1 && (
+          {/* TODO pagination */}
+          {totalPages > 1 && (
             <div className="flex items-center justify-center space-x-2 py-4">
               <Button
                 variant="outline"
@@ -168,13 +172,13 @@ export default function MovieSearch() {
                 Previous
               </Button>
               <div className="text-sm">
-                Page {currentPage} of {data.totalPages}
+                Page {currentPage} of {totalPages}
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === data.totalPages}
+                disabled={currentPage === totalPages}
               >
                 Next
                 <ChevronRight className="h-4 w-4" />

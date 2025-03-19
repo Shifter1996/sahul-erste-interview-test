@@ -12,14 +12,9 @@ export default function FavoriteMovies() {
   const { favorites, removeFromFavorites } = useMovieContext()
   
   const handleRemove = (id: string, title: string, e: React.MouseEvent) => {
-    // e.stopPropagation()\
-    // removeFromFavorites(id)  title: string, e: React.MouseEvent) => 
-    // e.stopPropagation()
-    // removeFromFavorites(id)
-    // toast({
-    //   title: "Removed from favorites",
-    //   description: `${title} has been removed from your favorites.`
-    // })
+    e.stopPropagation();
+    removeFromFavorites(id);
+    toast("Removed from favorites");
   }
   
   const handleMovieClick = (id: string) => {
@@ -27,7 +22,7 @@ export default function FavoriteMovies() {
   }
   
   return (
-    <div className="container py-6">
+    <div className="container p-6">
       <h1 className="text-2xl font-bold mb-6">My Favorite Movies</h1>
       
       {favorites.length === 0 ? (
@@ -41,26 +36,26 @@ export default function FavoriteMovies() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {favorites.map((movie) => (
             <Card 
-              key={movie.id} 
+              key={movie.imdbID} 
               className="overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => handleMovieClick(movie.id)}
+              onClick={() => handleMovieClick(movie.imdbID)}
             >
               <div className="aspect-[2/3] relative">
                 <img 
-                  src={movie.poster || "/placeholder.svg"} 
-                  alt={`${movie.title} poster`}
+                  src={movie.Poster || "/placeholder.svg"} 
+                  alt={`${movie.Title} poster`}
                   className="object-cover w-full h-full"
                 />
               </div>
               <CardContent className="p-4">
-                <h3 className="font-semibold truncate">{movie.title}</h3>
-                <p className="text-sm text-muted-foreground">{movie.year}</p>
+                <h3 className="font-semibold truncate">{movie.Title}</h3>
+                <p className="text-sm text-muted-foreground">{movie.Year}</p>
               </CardContent>
               <CardFooter className="p-4 pt-0 flex justify-end">
                 <Button 
                   variant="destructive" 
                   size="sm"
-                  onClick={(e) => handleRemove(movie.id, movie.title, e)}
+                  onClick={(e) => handleRemove(movie.imdbID, movie.Title || "", e)}
                 >
                   <Trash2 className="h-4 w-4 mr-1" />
                   Remove

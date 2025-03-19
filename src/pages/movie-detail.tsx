@@ -2,7 +2,7 @@
 
 import { useParams, useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import { getMovieById } from "@/lib/api"
+import { getMovieById } from "@/lib/api/api"
 import { useMovieContext } from "@/context/movie-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -28,25 +28,18 @@ export default function MovieDetail() {
   const handleFavoriteToggle = () => {
     if (!movie) return
 
-    if (isFavorite(movie.id)) {
-      removeFromFavorites(movie.id)
-      toast("Removed from favorites",
-        
-        description: `${movie.title} has been removed from your favorites.`,
-      })
+    if (isFavorite(movie.imdbID)) {
+      removeFromFavorites(movie.imdbID)
+      toast("Removed from favorites")
     } else {
       addToFavorites(movie)
-      toast({
-        message: "Added to favorites",
-        
-        description: `${movie.title} has been added to your favorites.`,
-      })
+      toast("Added to favorites")
     }
   }
 
   if (isLoading) {
     return (
-      <div className="container py-6">
+      <div className="container p-6">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
@@ -67,7 +60,7 @@ export default function MovieDetail() {
 
   if (error || !movie) {
     return (
-      <div className="container py-6">
+      <div className="container p-6">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
@@ -83,10 +76,10 @@ export default function MovieDetail() {
     )
   }
 
-  const favorite = isFavorite(movie.id)
+  const favorite = isFavorite(movie.imdbID)
 
   return (
-    <div className="container py-6">
+    <div className="container p-6">
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
         <ArrowLeft className="mr-2 h-4 w-4" />
         Back
@@ -94,14 +87,14 @@ export default function MovieDetail() {
 
       <div className="grid md:grid-cols-[300px_1fr] gap-8">
         <img
-          src={movie.poster || "/placeholder.svg"}
-          alt={`${movie.title} poster`}
+          src={movie.Poster || "/placeholder.svg"}
+          alt={`${movie.Title} poster`}
           className="rounded-lg shadow-md w-full max-w-[300px] h-auto"
         />
 
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold">{movie.title}</h1>
+            <h1 className="text-3xl font-bold">{movie.Title}</h1>
             <Button
               variant={favorite ? "default" : "outline"}
               size="icon"
@@ -114,28 +107,28 @@ export default function MovieDetail() {
 
           <div className="grid gap-4">
             <div className="flex gap-4 text-sm">
-              <div className="bg-muted px-2 py-1 rounded">{movie.year}</div>
-              {movie.genre && <div className="bg-muted px-2 py-1 rounded">{movie.genre}</div>}
+              <div className="bg-muted px-2 py-1 rounded">{movie.Year}</div>
+              {movie.Genre && <div className="bg-muted px-2 py-1 rounded">{movie.Genre}</div>}
             </div>
 
-            {movie.plot && (
+            {movie.Plot && (
               <div>
                 <h2 className="text-lg font-semibold mb-1">Plot</h2>
-                <p className="text-muted-foreground">{movie.plot}</p>
+                <p className="text-muted-foreground">{movie.Plot}</p>
               </div>
             )}
 
-            {movie.director && (
+            {movie.Director && (
               <div>
                 <h2 className="text-lg font-semibold mb-1">Director</h2>
-                <p className="text-muted-foreground">{movie.director}</p>
+                <p className="text-muted-foreground">{movie.Director}</p>
               </div>
             )}
 
-            {movie.actors && (
+            {movie.Actors && (
               <div>
                 <h2 className="text-lg font-semibold mb-1">Cast</h2>
-                <p className="text-muted-foreground">{movie.actors}</p>
+                <p className="text-muted-foreground">{movie.Actors}</p>
               </div>
             )}
           </div>

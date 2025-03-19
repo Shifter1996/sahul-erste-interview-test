@@ -19,7 +19,7 @@ export default function App() {
   // };
 
   return (
-    <body className="min-h-screen bg-background font-sans antialiased">
+    <div className="min-h-screen bg-background font-sans antialiased">
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <MovieProvider>
@@ -37,7 +37,7 @@ export default function App() {
           </MovieProvider>
         </BrowserRouter>
       </QueryClientProvider>
-    </body>
+    </div>
   )
 }
 
